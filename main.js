@@ -1,11 +1,60 @@
 // マスの情報を取得
 var gridArray = document.querySelectorAll(".grid");
 var mineInfoArray = Array(81).fill(0);
+var isStart = true;
+
+
+function getLeftCond(index) {
+    return (index % 9 != 0);
+};
+
+function getRightCond(index) {
+    return ((index + 1) % 9 != 0);
+}
+
+function getUpCond(index) {
+    return (index - 9 >= 0);
+}
+
+function getDownCond(index) {
+    return (index + 9 < mineInfoArray.length);
+}
+
+// 各マスにイベントを付与
+play();
+function play() {
+    for (let i = 0; i < gridArray.length; i++) {
+        gridArray[i].addEventListener("click", () => {
+            // はじめのクリック時のみ呼び出す処理
+            if (isStart) {
+                console.log("start");
+                setMines(i);
+                isStart = false;
+            }
+            console.log(`index=${i}`);
+        })
+    }
+};
 
 // TODO: はじめにクリックした個所は取り除く処理を追記する
-const createRandNum = () => {
-    // 0から80までが入った配列を定義
-    let arr = [...Array(81)].map((_, i) => i);
+function createRandNum(index) {
+    let filterIdxArr = () => {
+        let filterArr = [index];
+        if (getLeftCond(index)) { filterArr.push(index-1); }  // 左方向
+        if (getRightCond(index)) { filterArr.push(index+1); }  // 右方向
+        if (getUpCond(index)) { filterArr.push(index-9); }  // 上方向
+        if (getDownCond(index)) { filterArr.push(index+9); }  // 下方向
+        if (getLeftCond(index) && getUpCond(index)) { filterArr.push(index-10); }  // 左上方向
+        if (getLeftCond(index) && getDownCond(index)) { filterArr.push(index+8); }  // 左下方向
+        if (getRightCond(index) && getUpCond(index)) { filterArr.push(index-8); }  // 右上方向
+        if (getRightCond(index) && getDownCond(index)) { filterArr.push(index+10); }  // 右下方向
+        return filterArr;
+    }
+
+    console.log(index);
+    console.log(filterIdxArr());
+    // 0から80までが入った配列を作成。ただし、指定した値（filterIdx）は除外する。
+    let arr = [...Array(81)].map((_, i) => i).filter(n => !filterIdxArr().includes(n) );
     let arrLen = arr.length;
 
     // ランダムソート
@@ -21,49 +70,34 @@ const createRandNum = () => {
 };
 
 // TODO: 後ほどリファクタリングを行う
-const calcMineCount = (index) => {
+function calcMineCount(index) {
     const addCount = (idx) => {
         // 加算先が地雷でなければ＋1する
         if (mineInfoArray[idx] != "M") { mineInfoArray[idx] += 1; } 
     };
 
-    let leftCond = (index % 9 != 0);
-    let rightCond = ((index + 1) % 9 != 0);
-    let upCond = (index - 9 >= 0);
-    let downCond = (index + 9 < mineInfoArray.length);
-
     // 加算処理
-    if (leftCond) { addCount(index-1) }  // 左方向
-    if (rightCond) { addCount(index+1) }  // 右方向
-    if (upCond) { addCount(index-9) }  // 上方向
-    if (downCond) { addCount(index+9) }  // 下方向
-    if (leftCond && upCond) { addCount(index-10); }  // 左上方向
-    if (leftCond && downCond) { addCount(index+8); }  // 左下方向
-    if (rightCond && upCond) { addCount(index-8); }  // 右上方向
-    if (rightCond && downCond) { addCount(index+10); }  // 右下方向
+    if (getLeftCond(index)) { addCount(index-1) }  // 左方向
+    if (getRightCond(index)) { addCount(index+1) }  // 右方向
+    if (getUpCond(index)) { addCount(index-9) }  // 上方向
+    if (getDownCond(index)) { addCount(index+9) }  // 下方向
+    if (getLeftCond(index) && getUpCond(index)) { addCount(index-10); }  // 左上方向
+    if (getLeftCond(index) && getDownCond(index)) { addCount(index+8); }  // 左下方向
+    if (getRightCond(index) && getUpCond(index)) { addCount(index-8); }  // 右上方向
+    if (getRightCond(index) && getDownCond(index)) { addCount(index+10); }  // 右下方向
 };
 
-const setMines = () => {
-    let randArr = createRandNum();
+function setMines(index) {
+    let randArr = createRandNum(index);
     randArr.forEach(i => {
         mineInfoArray[i] = "M";
         calcMineCount(i);
     });
+    setGridText();
 };
 
-const setGridText = () => {
+function setGridText() {
     for (let i = 0; i < mineInfoArray.length; i++) {
         gridArray[i].textContent = mineInfoArray[i];
     }
-}
-
-gridArray.forEach((grid) => {
-    grid.addEventListener("click", () => {
-        console.log(grid.textContent);
-    })
-});
-
-
-setMines();
-console.log(mineInfoArray);
-setGridText();
+};
