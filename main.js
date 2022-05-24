@@ -57,6 +57,12 @@ const setGridText = () => {
     }
 }
 
+gridArray.forEach((grid) => {
+    grid.addEventListener("click", () => {
+        console.log(grid.textContent);
+    })
+});
+
 
 setMines();
 console.log(mineInfoArray);
