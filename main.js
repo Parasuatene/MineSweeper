@@ -20,22 +20,6 @@ function initMineInfoArray() {
     return arr;
 }
 
-function getLeftCond(index) {
-    return (index % 9 != 0);
-};
-
-function getRightCond(index) {
-    return ((index + 1) % 9 != 0);
-}
-
-function getUpCond(index) {
-    return (index - 9 >= 0);
-}
-
-function getDownCond(index) {
-    return (index + 9 < mineInfoArray.length);
-}
-
 // 各マスにイベントを付与
 play();
 function play() {
@@ -67,8 +51,6 @@ function createRandCoord(x, y) {
         return rmArr;
     };
 
-    console.log(index);
-    console.log(filterIdxArr());
     // 0から80までが入った配列を作成。ただし、指定した値（filterIdx）は除外する。
     let arr = [...Array(81)].map((_, i) => i).filter(n => !removeNums().includes(n) );
     let arrLen = arr.length;
