@@ -36,6 +36,17 @@ function play() {
     }
 };
 
+// 地雷のセット処理
+function setMines(x, y) {
+    let coordArray = createRandCoord(x, y);
+    coordArray.forEach(coord => {
+        let coord_y = coord[1];
+        let coord_x = coord[0];
+        mineInfoArray[coord_y][coord_x] = "M";
+        calcMineCount(coord_x, coord_y);
+    });
+};
+
 // TODO: はじめにクリックした個所は取り除く処理を追記する
 function createRandCoord(x, y) {
     // クリックした座標の周囲6方向のインデックスを取得
