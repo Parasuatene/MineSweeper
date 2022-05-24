@@ -1,9 +1,31 @@
-table , td, th {
-	border: 1px solid #595959;
-	border-collapse: collapse;
+#game{
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    flex-wrap:wrap;
+    align-content:stretch;
+    width: 500px;
 }
-td {
-	padding: 3px;
-	width: 30px;
-	height: 25px;
+
+/* TODO: 調べる */
+#game.pointer-none{
+    pointer-events: none;
+}
+
+.grid:hover {
+    background: rgb(243, 236, 227);
+    border: solid 1px #9c9c9c;
+    cursor: pointer;
+}
+
+.grid {
+    width:50px;
+    height: 50px;
+    padding: 0;
+    margin: 0;
+    color: #000000;
+    border: solid 1px #9c9c9c;
+	border-collapse: collapse;
 }
