@@ -78,30 +78,16 @@ function createRandCoord(x, y) {
 };
 
 // TODO: 後ほどリファクタリングを行う
-function calcMineCount(index) {
-    const addCount = (idx) => {
-        // 加算先が地雷でなければ＋1する
-        if (mineInfoArray[idx] != "M") { mineInfoArray[idx] += 1; } 
-    };
-
-    // 加算処理
-    if (getLeftCond(index)) { addCount(index-1) }  // 左方向
-    if (getRightCond(index)) { addCount(index+1) }  // 右方向
-    if (getUpCond(index)) { addCount(index-9) }  // 上方向
-    if (getDownCond(index)) { addCount(index+9) }  // 下方向
-    if (getLeftCond(index) && getUpCond(index)) { addCount(index-10); }  // 左上方向
-    if (getLeftCond(index) && getDownCond(index)) { addCount(index+8); }  // 左下方向
-    if (getRightCond(index) && getUpCond(index)) { addCount(index-8); }  // 右上方向
-    if (getRightCond(index) && getDownCond(index)) { addCount(index+10); }  // 右下方向
-};
-
-function setMines(index) {
-    let randArr = createRandNum(index);
-    randArr.forEach(i => {
-        mineInfoArray[i] = "M";
-        calcMineCount(i);
-    });
-    setGridText();
+function calcMineCount(x, y) {
+    for (let i=-1; i<=1; i++) {
+        for (let j=-1; j<=1; j++) {
+            if ((x+j) >= 0 && (y+i) >= 0 && (x+j) < 9 && (y+i) < 9) {
+                if (mineInfoArray[y+i][x+j] != "M") {
+                    mineInfoArray[y+i][x+j] += 1;
+                }
+            }
+        }
+    }
 };
 
 function setGridText() {
