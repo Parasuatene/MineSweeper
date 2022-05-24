@@ -47,24 +47,24 @@ function play() {
 };
 
 // TODO: はじめにクリックした個所は取り除く処理を追記する
-function createRandNum(index) {
-    let filterIdxArr = () => {
-        let filterArr = [index];
-        if (getLeftCond(index)) { filterArr.push(index-1); }  // 左方向
-        if (getRightCond(index)) { filterArr.push(index+1); }  // 右方向
-        if (getUpCond(index)) { filterArr.push(index-9); }  // 上方向
-        if (getDownCond(index)) { filterArr.push(index+9); }  // 下方向
-        if (getLeftCond(index) && getUpCond(index)) { filterArr.push(index-10); }  // 左上方向
-        if (getLeftCond(index) && getDownCond(index)) { filterArr.push(index+8); }  // 左下方向
-        if (getRightCond(index) && getUpCond(index)) { filterArr.push(index-8); }  // 右上方向
-        if (getRightCond(index) && getDownCond(index)) { filterArr.push(index+10); }  // 右下方向
-        return filterArr;
-    }
+function createRandCoord(x, y) {
+    // クリックした座標の周囲6方向のインデックスを取得
+    const removeNums = () => {
+        let rmArr = [];
+        for (let i=-1; i<=1; i++) {
+            for (let j=-1; j<=1; j++) {
+                if ((x+j) >= 0 && (y+i) >= 0 && (x+j) < 9 && (y+i) < 9) {
+                    rmArr.push( (x + j) + (y + i) * 9 );
+                }
+            }
+        }
+        return rmArr;
+    };
 
     console.log(index);
     console.log(filterIdxArr());
     // 0から80までが入った配列を作成。ただし、指定した値（filterIdx）は除外する。
-    let arr = [...Array(81)].map((_, i) => i).filter(n => !filterIdxArr().includes(n) );
+    let arr = [...Array(81)].map((_, i) => i).filter(n => !removeNums().includes(n) );
     let arrLen = arr.length;
 
     // ランダムソート
