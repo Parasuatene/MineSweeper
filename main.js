@@ -10,10 +10,10 @@ const createRandNum = () => {
 
     // ランダムソート
     for (let i=0; i < arrLen; i++) {
-        let j = Math.floor(Math.random() *  arrLen);
-        let t = arr[--arrLen];
-        arr[arrLen] = arr[j];
-        arr[j] = t;
+        let j = Math.floor(Math.random() * arrLen);
+        let temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
     
     // 前から10個取得し返却する
@@ -26,5 +26,7 @@ const setMines = () => {
         gridArray[i].textContent = "Mine";  // ひとまず地雷箇所には文字列を代入
     });
 };
+
+
 
 setMines();
