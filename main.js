@@ -1,6 +1,6 @@
 // マスの情報を取得
 var gridArray = document.querySelectorAll(".grid");
-// console.log(gridArray);
+var mineInfoArray = Array(81).fill(0);
 
 // TODO: はじめにクリックした個所は取り除く処理を追記する
 const createRandNum = () => {
@@ -46,10 +46,18 @@ const calcMineCount = (index) => {
 const setMines = () => {
     let randArr = createRandNum();
     randArr.forEach(i => {
-        gridArray[i].textContent = "Mine";  // ひとまず地雷箇所には文字列を代入
+        mineInfoArray[i] = "M";
+        calcMineCount(i);
     });
 };
 
+const setGridText = () => {
+    for (let i = 0; i < mineInfoArray.length; i++) {
+        gridArray[i].textContent = mineInfoArray[i];
+    }
+}
 
 
 setMines();
+console.log(mineInfoArray);
+setGridText();
