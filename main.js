@@ -3,6 +3,16 @@ var gridArray = document.querySelectorAll(".grid");
 var mineInfoArray = Array(81).fill(0);
 var isStart = true;
 
+// .gridクラスの要素を配列として取得した後、二次元配列に変換し、返却する
+function initGridArray() {
+    let elms = document.querySelectorAll(".grid");
+    let newArr = [];
+    for (var i = 0; i < 9; i++) {
+        let start = i*9;
+        newArr.push(Array.from(elms).slice(start, start+8));
+    }
+    return newArr;
+}
 
 function getLeftCond(index) {
     return (index % 9 != 0);
