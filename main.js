@@ -75,8 +75,18 @@ function createRandCoord(x, y) {
         arr[j] = temp;
     }
     
-    // 前から10個取得し返却する
-    return arr.slice(0, 10);
+    // x座標、y座標の形式に変換する
+    const convertCoord = () => { 
+        let randNum = arr.slice(0, 10);
+        let coord = [];
+        randNum.forEach(num => {
+            coord.push([num % 9, Math.floor(num / 9)]);
+        });
+        console.log(coord);
+        return coord;
+    }
+
+    return convertCoord();
 };
 
 // TODO: 後ほどリファクタリングを行う
