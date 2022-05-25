@@ -3,6 +3,7 @@ var gridArray = initGridArray();
 var mineInfoArray = initMineInfoArray();
 var isCheckedArray = initIsCheckedArray();
 var isStart = true;
+var totalMine = 10;
 const SEARCH_ROOT = [
     [0, 1],
     [-1, 0],
@@ -10,6 +11,7 @@ const SEARCH_ROOT = [
     [1, 0],
     [0, -1]
 ];
+var count = gridArray.length;
 
 // .gridクラスの要素を配列として取得した後、二次元配列に変換し、返却する
 function initGridArray() {
@@ -40,21 +42,51 @@ function play() {
     for (let y = 0; y < gridArray.length; y++) {
         for (let x = 0; x < gridArray[y].length; x++) {
             gridArray[y][x].addEventListener("click", () => {
-                // はじめのクリック時のみ呼び出す処理
                 if (isStart) {
+                    // はじめのクリック時のみ呼び出す処理
                     setMines(x, y);
                     isStart = false;
                 }
                 search(x, y);
+
+                // 残りマスが地雷と同じ数になった時点でゲーム終了処理に移る
+                if (count == totalMine) {
+                    gameResult("SUCCESS");
+                }
             })
         }
     }
 };
 
+// ゲームのリザルト処理
+function gameResult(status) {
+    if (status == "SUCCESS") {
+        alert("ゲームクリア");
+    } else if (status == "FAILURE") {
+        alert("ゲームオーバーです");
+    }
+    checkAllGrid();
+}
+
+function checkAllGrid() {
+    for (var i = 0; i < isCheckedArray.length; i++) {
+        for (var j = 0; j < isCheckedArray[i].length; j++) {
+            isCheckedArray[j][i] = true;
+        }
+    }
+}
+
+// クリックした個所が地雷か否か確認する
+function isMineJudge(x, y) {
+    if (mineInfoArray[y][x] == "M") { return true; }
+    return false;
+}
+
 // 地雷の探索処理
 function search(x, y) {
     // 地雷でないとき
     if (!isCheckedArray[y][x]) {
+        count -= 1;
         // 周囲の地雷数が0のとき
         if (mineInfoArray[y][x] == 0) {
             setGridClass(x, y);
@@ -67,11 +99,14 @@ function search(x, y) {
                 }
             });
         } else {
-            if (mineInfoArray[y][x] != "M") {
-                setGridClass(x, y);
-                checkGrid(x, y);
+            setGridClass(x, y);
+            checkGrid(x, y);
+            if (mineInfoArray[y][x] == "M") {
+                gameResult("FAILURE");
+                return;
+            } else {
+                return;
             }
-            return;
         }
     }
 }
@@ -116,7 +151,7 @@ function createRandCoord(x, y) {
     
     // x座標、y座標の形式に変換する
     const convertCoord = () => { 
-        let randNum = arr.slice(0, 10);
+        let randNum = arr.slice(0, totalMine);
         let coord = [];
         randNum.forEach(num => {
             coord.push([num % 9, Math.floor(num / 9)]);
