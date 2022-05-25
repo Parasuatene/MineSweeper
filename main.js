@@ -183,5 +183,6 @@ function setGridClass(x, y) {
 
 function checkGrid(x, y) {
     isCheckedArray[y][x] = true;
+    gridArray[y][x].classList.remove("grid");
     if (mineInfoArray[y][x] != 0) { gridArray[y][x].textContent = mineInfoArray[y][x]; }
 }
