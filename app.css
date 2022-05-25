@@ -34,6 +34,10 @@
     font-weight: bold;
 }
 
+.checked {
+    background-color: #d4d4d4;
+}
+
 .type-1 {
     color: #1900ff;
 }
