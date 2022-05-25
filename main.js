@@ -1,6 +1,6 @@
 // マスの情報を取得
-var gridArray = document.querySelectorAll(".grid");
-var mineInfoArray = Array(81).fill(0);
+var gridArray = initGridArray();
+var mineInfoArray = initMineInfoArray();
 var isStart = true;
 
 // .gridクラスの要素を配列として取得した後、二次元配列に変換し、返却する
@@ -9,7 +9,7 @@ function initGridArray() {
     let newArr = [];
     for (var i = 0; i < 9; i++) {
         let start = i*9;
-        newArr.push(Array.from(elms).slice(start, start+8));
+        newArr.push(Array.from(elms).slice(start, start+9));
     }
     return newArr;
 }
@@ -23,16 +23,17 @@ function initMineInfoArray() {
 // 各マスにイベントを付与
 play();
 function play() {
-    for (let i = 0; i < gridArray.length; i++) {
-        gridArray[i].addEventListener("click", () => {
-            // はじめのクリック時のみ呼び出す処理
-            if (isStart) {
-                console.log("start");
-                setMines(i);
-                isStart = false;
-            }
-            console.log(`index=${i}`);
-        })
+    for (let y = 0; y < gridArray.length; y++) {
+        for (let x = 0; x < gridArray[y].length; x++) {
+            gridArray[y][x].addEventListener("click", () => {
+                // はじめのクリック時のみ呼び出す処理
+                if (isStart) {
+                    setMines(x, y);
+                    isStart = false;
+                }
+                setGridText();
+            })
+        }
     }
 };
 
@@ -101,8 +102,11 @@ function calcMineCount(x, y) {
     }
 };
 
-function setGridText() {
-    for (let i = 0; i < mineInfoArray.length; i++) {
-        gridArray[i].textContent = mineInfoArray[i];
+function setGridInfo() {
+    for (let i = 0; i < gridArray.length; i++) {
+        for (let j = 0; j < gridArray[i].length; j++) {
+            gridArray[j][i].classList.add("type-" + mineInfoArray[j][i]);  // クラス情報を付与
+            gridArray[j][i].textContent = mineInfoArray[j][i];
+        }
     }
 };
