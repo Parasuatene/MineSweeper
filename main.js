@@ -8,11 +8,15 @@ var isStart = true;
 var onFlag = false;
 var totalMine = 10;
 const SEARCH_ROOT = [
+    [-1, -1],
     [0, 1],
+    [1, 1],
     [-1, 0],
     [0, 0],
     [1, 0],
-    [0, -1]
+    [-1, -1],
+    [0, -1],
+    [1, -1]
 ];
 var count = gridArray.length;
 
