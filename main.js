@@ -37,6 +37,34 @@ function play() {
     }
 };
 
+// 地雷の探索処理
+function search(x, y) {
+    // 地雷でないとき
+    if (!isCheckedArray[y][x]) {
+        // 周囲の地雷数が0のとき
+        if (mineInfoArray[y][x] == 0) {
+            isCheckedArray[y][x] = true;
+            setGridInfo(x, y);
+            SEARCH_ROOT.forEach(root => {
+                let i = root[0];
+                let j = root[1];
+                if ((x+j) >= 0 && (y+i) >= 0 && (x+j) < 9 && (y+i) < 9) {
+                    search(x+j, y+i);
+                }
+            })
+        } else {
+            if (mineInfoArray[y][x] == "M") {
+                return;
+            } else {
+                setGridInfo(x, y);
+                return;
+            }
+        }
+    } else {
+        return;
+    }
+}
+
 // 地雷のセット処理
 function setMines(x, y) {
     let coordArray = createRandCoord(x, y);
