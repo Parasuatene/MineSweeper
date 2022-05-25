@@ -2,7 +2,10 @@
 var gridArray = initGridArray();
 var mineInfoArray = initMineInfoArray();
 var isCheckedArray = initIsCheckedArray();
+var onFlagArray = initOnFlagArray();
+var flagElm = document.querySelector(".flag-btn");
 var isStart = true;
+var onFlag = false;
 var totalMine = 10;
 const SEARCH_ROOT = [
     [0, 1],
@@ -36,27 +39,78 @@ function initIsCheckedArray() {
     return arr;
 }
 
+function initOnFlagArray() {
+    let arr = Array(9);
+    for (var i = 0; i < arr.length; i++) { arr[i] = Array(9).fill(false); }
+    return arr;
+}
+
 // 各マスにイベントを付与
 play();
+flagClick();
+
 function play() {
     for (let y = 0; y < gridArray.length; y++) {
         for (let x = 0; x < gridArray[y].length; x++) {
             gridArray[y][x].addEventListener("click", () => {
-                if (isStart) {
-                    // はじめのクリック時のみ呼び出す処理
-                    setMines(x, y);
-                    isStart = false;
-                }
-                search(x, y);
-
-                // 残りマスが地雷と同じ数になった時点でゲーム終了処理に移る
-                if (count == totalMine) {
-                    gameResult("SUCCESS");
+                if (onFlag) {
+                    // フラグ状態がオンのとき
+                    if (onFlagArray[y][x]) {
+                        onFlagArray[y][x] = false;
+                        gridArray[y][x].textContent = ""; 
+                    } else {
+                        onFlagArray[y][x] = true;
+                        gridArray[y][x].textContent = "F";
+                    }
+                } else {
+                    if (!onFlagArray[y][x]) {
+                        // フラグ状態がオフのとき
+                        if (isStart) {
+                            // はじめのクリック時のみ呼び出す処理
+                            setMines(x, y);
+                            isStart = false;
+                        }
+                        search(x, y);
+        
+                        // 残りマスが地雷と同じ数になった時点でゲーム終了処理に移る
+                        if (count == totalMine) {
+                            gameResult("SUCCESS");
+                        }
+                    }
                 }
             })
         }
     }
 };
+
+function flagClick() {
+    const changeFlagStatus = (add, remove, status) => {
+        flagElm.classList.add(add);
+        flagElm.classList.remove(remove);
+        onFlag = status;
+    }
+    flagElm.addEventListener("click", () => {
+        if (onFlag) {
+            changeFlagStatus("flag-off", "flag-on", false);
+        } else {
+            changeFlagStatus("flag-on", "flag-off", true);
+            displayFlag();
+        }
+        console.log(flagElm);
+        console.log("Flagの状態：" + onFlag);
+    });
+}
+
+function displayFlag(status) {
+    for (let y = 0; y < gridArray.length; y++) {
+        for (let x = 0; x < gridArray[y].length; x++) {
+            if (onFlagArray[y][x]) {
+                gridArray[y][x].textContent = "F"; 
+            }
+        }
+    }
+}
+
 
 // ゲームのリザルト処理
 function gameResult(status) {
@@ -177,8 +231,8 @@ function calcMineCount(x, y) {
 
 // グリッドの情報を追加する処理
 function setGridClass(x, y) {
-    gridArray[y][x].classList.add("type-" + mineInfoArray[y][x]);  // クラス情報を付与
-    gridArray[y][x].classList.add("checked");  // クラス情報を付与
+        gridArray[y][x].classList.add("type-" + mineInfoArray[y][x]);  // クラス情報を付与
+        gridArray[y][x].classList.add("checked");  // クラス情報を付与
 };
 
 function checkGrid(x, y) {
