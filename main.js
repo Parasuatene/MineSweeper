@@ -1,7 +1,15 @@
 // マスの情報を取得
 var gridArray = initGridArray();
 var mineInfoArray = initMineInfoArray();
+var isCheckedArray = initIsCheckedArray();
 var isStart = true;
+const SEARCH_ROOT = [
+    [0, 1],
+    [-1, 0],
+    [0, 0],
+    [1, 0],
+    [0, -1]
+];
 
 // .gridクラスの要素を配列として取得した後、二次元配列に変換し、返却する
 function initGridArray() {
@@ -20,6 +28,12 @@ function initMineInfoArray() {
     return arr;
 }
 
+function initIsCheckedArray() {
+    let arr = Array(9);
+    for (var i = 0; i < arr.length; i++) { arr[i] = Array(9).fill(false); }
+    return arr;
+}
+
 // 各マスにイベントを付与
 play();
 function play() {
@@ -31,7 +45,7 @@ function play() {
                     setMines(x, y);
                     isStart = false;
                 }
-                setGridText();
+                search(x, y);
             })
         }
     }
@@ -43,25 +57,22 @@ function search(x, y) {
     if (!isCheckedArray[y][x]) {
         // 周囲の地雷数が0のとき
         if (mineInfoArray[y][x] == 0) {
-            isCheckedArray[y][x] = true;
-            setGridInfo(x, y);
+            setGridClass(x, y);
+            checkGrid(x, y);
             SEARCH_ROOT.forEach(root => {
                 let i = root[0];
                 let j = root[1];
                 if ((x+j) >= 0 && (y+i) >= 0 && (x+j) < 9 && (y+i) < 9) {
                     search(x+j, y+i);
                 }
-            })
+            });
         } else {
-            if (mineInfoArray[y][x] == "M") {
-                return;
-            } else {
-                setGridInfo(x, y);
-                return;
+            if (mineInfoArray[y][x] != "M") {
+                setGridClass(x, y);
+                checkGrid(x, y);
             }
+            return;
         }
-    } else {
-        return;
     }
 }
 
@@ -110,7 +121,6 @@ function createRandCoord(x, y) {
         randNum.forEach(num => {
             coord.push([num % 9, Math.floor(num / 9)]);
         });
-        console.log(coord);
         return coord;
     }
 
@@ -130,11 +140,13 @@ function calcMineCount(x, y) {
     }
 };
 
-function setGridInfo() {
-    for (let i = 0; i < gridArray.length; i++) {
-        for (let j = 0; j < gridArray[i].length; j++) {
-            gridArray[j][i].classList.add("type-" + mineInfoArray[j][i]);  // クラス情報を付与
-            gridArray[j][i].textContent = mineInfoArray[j][i];
-        }
-    }
+// グリッドの情報を追加する処理
+function setGridClass(x, y) {
+    gridArray[y][x].classList.add("type-" + mineInfoArray[y][x]);  // クラス情報を付与
+    gridArray[y][x].classList.add("checked");  // クラス情報を付与
 };
+
+function checkGrid(x, y) {
+    isCheckedArray[y][x] = true;
+    if (mineInfoArray[y][x] != 0) { gridArray[y][x].textContent = mineInfoArray[y][x]; }
+}
